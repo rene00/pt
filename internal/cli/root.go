@@ -17,7 +17,6 @@ func Execute() {
 	rootCmd.AddCommand(exifCmd(cli))
 	rootCmd.AddCommand(scanCmd(cli))
 	rootCmd.AddCommand(cr2DupeCmd(cli))
-	rootCmd.AddCommand(cr2ConvertCmd(cli))
 	if err := rootCmd.ExecuteContext(context.TODO()); err != nil {
 		os.Exit(1)
 	}
