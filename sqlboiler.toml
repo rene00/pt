@@ -1,0 +1,8 @@
+output      = "internal/model"
+pkgname     = "model"
+wipe        = true
+no-tests    = true
+
+[sqlite3]
+dbname      = "./pt.db"
+blacklist   = ["schema_migrations"]
