@@ -2,6 +2,7 @@ package file
 
 import (
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path"
@@ -25,8 +26,7 @@ type File struct {
 	// OriginalFilePath is the absolute file path of where the file was copied from.
 	OriginalFilePath string
 
-	// ModTime is last modification timestamp of file.
-	ModTime time.Time
+	FileInfo fs.FileInfo
 
 	// ExifData is a map of relevant exif data.
 	exifData map[string]string
@@ -50,9 +50,9 @@ func WithFilenameSuffix(suffix string) Option {
 
 
 // NewFile ...
-func NewFile(originalFilePath string, modTime time.Time) File {
+func NewFile(originalFilePath string, fileInfo fs.FileInfo) File {
 	logger := logwrap.Get("pt")
-	return File{OriginalFilePath: originalFilePath, ModTime: modTime, logger: logger}
+	return File{OriginalFilePath: originalFilePath, FileInfo: fileInfo, logger: logger}
 }
 
 // Timestamp returns the creation date of the timestamp. If it's unable to find
@@ -97,18 +97,18 @@ func (f File) Timestamp() time.Time {
 	case f.isVideo():
 		fh, err := os.Open(f.OriginalFilePath)
 		if err != nil {
-			creationDate = f.ModTime
+			creationDate = f.FileInfo.ModTime()
 			break
 		}
 		defer fh.Close()
 		creationDate, err = fileutil.GetVideoCreationTimeMetadata(fh)
 		if err != nil {
-			creationDate = f.ModTime
+			creationDate = f.FileInfo.ModTime()
 		}
 	}
 
 	if creationDate.IsZero() {
-		creationDate = f.ModTime
+		creationDate = f.FileInfo.ModTime()
 	}
 
 	f.timestamp = creationDate
@@ -171,7 +171,6 @@ func (f File) DestinationFilePath(destinationDir string, deviceName string, crea
 	for _, opt := range opts {
 		f = opt(f)
 	}
-
 
 	album := f.DirName()
 
