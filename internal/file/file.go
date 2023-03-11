@@ -48,7 +48,6 @@ func WithFilenameSuffix(suffix string) Option {
 	}
 }
 
-
 // NewFile ...
 func NewFile(originalFilePath string, fileInfo fs.FileInfo) File {
 	logger := logwrap.Get("pt")
@@ -177,8 +176,8 @@ func (f File) DestinationFilePath(destinationDir string, deviceName string, crea
 	// Rewrite album to a value in this map if the dir matches a key. This
 	// allows to copy a DCIM directory into the same photosync structure.
 	albumDirMapping := map[string]string{
-		`^1\d{2}APPLE$`: "Recents",
-		`^1\d{2}CANON$`: "Recents",
+		`^1\d{2}APPLE$`:       "Recents",
+		`^1\d{2}CANON$`:       "Recents",
 		`^\d{4}-\d{2}-\d{2}$`: "Recents",
 	}
 
@@ -223,6 +222,7 @@ func IsSupportedFileType(originalFilePath string) (bool, error) {
 		types.Get("heif"),
 		types.Get("cr2"),
 		types.Get("mov"),
+		types.Get("mp4"),
 	}
 
 	head := make([]byte, 261)
